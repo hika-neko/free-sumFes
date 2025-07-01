@@ -1,0 +1,28 @@
+・テーマ
+「夏祭り」or フリー
+
+・提出日
+9/4(月)
+
+提出方法
+GitHubで見る
+実行データも含むべし
+
+ポイント:
+・ソース管理はGitHub使ってね
+　→LFSは利用しない
+　　→1ファイルのサイズが100MBを超えないように注意
+　　　・一部FBX(FBX内にテクスチャを持っているFBX)
+　　　・Unity TextMeshProのフォントデータ(.asset)
+　　　・リポジトリのサイズにも注意
+　　　・要らないやつ(asset)は消していく
+・クオリティ
+　→デフォのボタンやフォントはダメ
+・開発環境は自由
+・ChatGPTを筆頭としたAIにプログラムコードを出力させることはNG
+
+TextMeshPro
+常用漢字を使えるようにする、とか、FontSize=2048*2048
+
+SceneManager.LoadScene("なにか", LoadSceneMode.Additicve)
+

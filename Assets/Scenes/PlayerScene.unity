@@ -123,6 +123,75 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &36495660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 36495662}
+  - component: {fileID: 36495661}
+  m_Layer: 0
+  m_Name: FighterManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &36495661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36495660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 692114ca8939cbd4f9f8839f8f2e5441, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fighterList:
+  - id: 0
+    kind: Commoner
+    unlockCost: 0
+    cost: 100
+    attack: 1
+    speed: 5
+    prefab_name: "1-1.\u5E73\u6C11Fat"
+    unlocked: 1
+  - id: 1
+    kind: Warrior
+    unlockCost: 1000
+    cost: 150
+    attack: 2
+    speed: 5
+    prefab_name: "2.\u6226\u58EB"
+    unlocked: 0
+  - id: 2
+    kind: AdvanceWarrior
+    unlockCost: 2500
+    cost: 200
+    attack: 3
+    speed: 5
+    prefab_name: "3.\u4E0A\u7D1A\u6226\u58EB"
+    unlocked: 0
+--- !u!4 &36495662
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36495660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.7289581, y: -1.5386218, z: -0.10831102}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &236572529
 GameObject:
   m_ObjectHideFlags: 0
@@ -247,7 +316,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92b94dac5c01eca4f9f928d4eaee2408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentMode: 0
+  selectFighter: 0
+  currentMode: 1
   moveSpeed: 5
   jumpForce: 6
   groundLayer:
@@ -269,6 +339,7 @@ MonoBehaviour:
   - "\u6E96\u5099"
   - "\u5E73\u6C11"
   - "\u6226\u58EB"
+  kingId: 1
 --- !u!50 &236572534
 Rigidbody2D:
   serializedVersion: 4
@@ -991,9 +1062,54 @@ MonoBehaviour:
   - {fileID: 7144358889182732126, guid: a371ca97e89f8a8489814fe0e0197434, type: 3}
   - {fileID: 6818592604753318934, guid: b056a6a57dac48241aea4f59f26dddcd, type: 3}
   fighters:
+  - {fileID: 7144358889182732126, guid: a371ca97e89f8a8489814fe0e0197434, type: 3}
   - {fileID: 7144358889182732126, guid: b84af76d588643c4b81abede79083a8e, type: 3}
   - {fileID: 7144358889182732126, guid: 32b6f064df54dc348a9ac4ced4a67575, type: 3}
   maxSpawnCount: 10
+--- !u!1 &1141752268
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1141752270}
+  - component: {fileID: 1141752269}
+  m_Layer: 0
+  m_Name: MoneyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1141752269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1141752268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f989f7644629755409aaf3de649f3c9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1141752270
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1141752268}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1614075251
 GameObject:
   m_ObjectHideFlags: 0
@@ -1104,3 +1220,5 @@ SceneRoots:
   - {fileID: 1614075255}
   - {fileID: 497743311}
   - {fileID: 668616663}
+  - {fileID: 1141752270}
+  - {fileID: 36495662}

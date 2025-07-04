@@ -8,6 +8,7 @@ public class MoneyConut : MonoBehaviour
 {
 	[SerializeField] KingMove king;
 	[SerializeField] TextMeshProUGUI moneyText;
+	private int lastDisplayedMoney = -1;
 
 	private void Start()
 	{
@@ -17,17 +18,23 @@ public class MoneyConut : MonoBehaviour
 			if (king == null)
 			{
 				Debug.LogWarning("King‚ªƒV[ƒ““à‚ÉŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½");
+				return;
 			}
 		}
+		UpdateUI(); // ‰Šú•\¦
 	}
 
 	private void Update()
 	{
-		UpdateUI();
+		if (king != null && king.money != lastDisplayedMoney)
+		{
+			UpdateUI();
+		}
 	}
 	
 	void UpdateUI()
 	{
+		lastDisplayedMoney = king.money;
 		moneyText.text = "Money:" + king.money.ToString();
 	}
 }

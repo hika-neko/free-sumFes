@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4472814871369082}
   - component: {fileID: 2569400266066529242}
   m_Layer: 31
-  m_Name: TCF_mapTiles
+  m_Name: TCF_Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

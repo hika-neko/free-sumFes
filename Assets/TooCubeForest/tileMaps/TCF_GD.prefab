@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4070031628022640}
   - component: {fileID: 2569400268001725594}
   m_Layer: 31
-  m_Name: TCF_decorations
+  m_Name: TCF_GD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

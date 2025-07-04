@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class KingMove : MonoBehaviour
 {
-	public enum Fighter
+	public enum CallingFighter
 	{
 		Commoner,
 		Warrior,
@@ -19,7 +19,9 @@ public class KingMove : MonoBehaviour
 	}
 
 
-	private Fighter selectedFighter = Fighter.Commoner;
+	private Fighter selectedFighter;
+	public List<Fighter> fighterList => FighterManager.Instance.fighterList;
+	[SerializeField] CallingFighter selectFighter = CallingFighter.Commoner;
 	[SerializeField] Mode currentMode = Mode.Fight;
 
 	[SerializeField] float moveSpeed = 5f;
@@ -46,6 +48,8 @@ public class KingMove : MonoBehaviour
 	[SerializeField] AudioClip[] kingAudios;
 	[SerializeField] string[] kingAudiosMemo;
 
+	[SerializeField] private int kingId = 1;
+
 	private float moneyTime = 2.5f;
 	float timer = 0f;
 	void Start()
@@ -54,12 +58,23 @@ public class KingMove : MonoBehaviour
 		rb = GetComponent<Rigidbody2D>();
 		sr = GetComponent<SpriteRenderer>();
 	}
+	private Fighter GetSelectedFighter(string kind)
+	{
+		return fighterList.Find(f => f.kind == kind);
+	}
+
+	private bool CanSummon(Fighter f)
+	{
+		return f.unlocked == 1 && money >= f.cost;
+	}
 
 	void Update()
 	{
 		movement.x = Input.GetAxis("Horizontal");
 		movement.Normalize();
 		isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+		
+		Fighter selectedData = GetSelectedFighter(selectFighter.ToString());
 
 		if (Mathf.Abs(movement.x) < 0.01f)
 		{
@@ -86,15 +101,21 @@ public class KingMove : MonoBehaviour
 		switch (currentMode)
 		{
 			case Mode.Castle:
-			if (currentMode == Mode.Castle)
-			{
 				timer += Time.deltaTime;
 				if (timer >= moneyTime)
 				{
-					money += 1000;
+					AddMoney(1000);
 					timer = 0f;
 				}
-			}
+
+				if(Input.GetKeyDown(KeyCode.S) && selectedData.unlocked == 0)
+				{
+					if(TryUseMoney(selectedData.unlock_cost))
+					{
+						selectedData.unlocked = 1;
+						StartCoroutine(FighterManager.Instance.UnlockFighterOnServer(selectedData.fighter_id));
+					}
+				}
 			break;
 
 			case Mode.Fight:
@@ -102,7 +123,7 @@ public class KingMove : MonoBehaviour
 			{
 				kingAudio.clip = null;
 				kingAudio.clip = kingAudios[0];
-				selectedFighter = Fighter.Commoner;
+				selectFighter = CallingFighter.Commoner;
 				Debug.Log("•½–¯Wait");
 				kingAudio.Play();
 			}
@@ -110,7 +131,7 @@ public class KingMove : MonoBehaviour
 			{
 				kingAudio.clip = null;
 				kingAudio.clip = kingAudios[0];
-				selectedFighter = Fighter.Warrior;
+				selectFighter = CallingFighter.Warrior;
 				Debug.Log("íŽmWait");
 				kingAudio.Play();
 			}
@@ -118,39 +139,31 @@ public class KingMove : MonoBehaviour
 			{
 				kingAudio.clip = null;
 				kingAudio.clip = kingAudios[0];
-				selectedFighter = Fighter.AdvanceWarrior;
+				selectFighter = CallingFighter.AdvanceWarrior;
 				Debug.Log("ã‹‰íŽmWait");
 				kingAudio.Play();
 			}
 
-			if (isMove)
+			if (currentMode == Mode.Fight && isMove)
 			{
-				// EnterƒL[‰Ÿ‰º‚Å—¿—‚ÌE“¾ or “n‚·”»’è‚ðs‚¤
-				if (Input.GetKeyDown(KeyCode.Space))
+				if(Input.GetKeyDown(KeyCode.Space))
 				{
-					switch (selectedFighter)
+
+					if (selectedData != null && CanSummon(selectedData) && currentMode == Mode.Fight)
 					{
-						case Fighter.Commoner:
-						kingAudio.clip = null;
-						kingAudio.clip = kingAudios[1];
-						generator.Spawner(sr.flipX, 4, 0);
-						break;
+						money -= selectedData.cost;
+						MoneyManager.Instance.ChangeMoney(kingId, -selectedData.cost);
 
-						case Fighter.Warrior:
-						kingAudio.clip = null;
-						kingAudio.clip = kingAudios[1];
-						generator.Spawner(sr.flipX, 5, 1);
-						break;
+						generator.Spawner(sr.flipX, selectedData.attack, selectedData.fighter_id);
 
-						case Fighter.AdvanceWarrior:
-						kingAudio.clip = null;
-						kingAudio.clip = kingAudios[2];
-						generator.Spawner(sr.flipX, 10, 2);
-						break;
+						kingAudio.clip = kingAudios[1];
+						kingAudio.Play();
+						animator.SetTrigger("Attack");
 					}
-					kingAudio.Play();
-					Debug.Log(kingAudio.clip.name);
-					animator.SetTrigger("Attack");
+					else
+					{
+						Debug.Log("¢Š«Ž¸”sF‰ð•ú‚³‚ê‚Ä‚¢‚È‚¢‚©ŠŽ‹à•s‘«");
+					}
 				}
 			}
 			break;
@@ -167,5 +180,22 @@ public class KingMove : MonoBehaviour
 	public void SetMoveEnabled(bool enabled)
 	{
 		isMove = enabled;
+	}
+
+	public bool TryUseMoney(int amount)
+	{
+		if (money >= amount)
+		{
+			money -= amount;
+			MoneyManager.Instance.ChangeMoney(kingId, -amount);
+			return true;
+		}
+		return false;
+	}
+
+	public void AddMoney(int amount)
+	{
+		money += amount;
+		MoneyManager.Instance.ChangeMoney(kingId, amount);
 	}
 }

@@ -6,7 +6,8 @@ using TMPro;
 
 public class MoneyConut : MonoBehaviour
 {
-	[SerializeField] KingMove king;
+	[SerializeField] KingMovement king;
+	[SerializeField] KingMoneyManager kingMoney;
 	[SerializeField] TextMeshProUGUI moneyText;
 	private int lastDisplayedMoney = -1;
 
@@ -14,7 +15,7 @@ public class MoneyConut : MonoBehaviour
 	{
 		if(king == null)
 		{
-			king = FindObjectOfType<KingMove>();
+			king = FindObjectOfType<KingMovement>();
 			if (king == null)
 			{
 				Debug.LogWarning("KingÇ™ÉVÅ[Éìì‡Ç…å©Ç¬Ç©ÇËÇ‹ÇπÇÒÇ≈ÇµÇΩ");
@@ -26,7 +27,7 @@ public class MoneyConut : MonoBehaviour
 
 	private void Update()
 	{
-		if (king != null && king.money != lastDisplayedMoney)
+		if (king != null && kingMoney.money != lastDisplayedMoney)
 		{
 			UpdateUI();
 		}
@@ -34,7 +35,7 @@ public class MoneyConut : MonoBehaviour
 	
 	void UpdateUI()
 	{
-		lastDisplayedMoney = king.money;
-		moneyText.text = "Money:" + king.money.ToString();
+		lastDisplayedMoney = kingMoney.money;
+		moneyText.text = "Money:" + kingMoney.money.ToString();
 	}
 }

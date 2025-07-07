@@ -11,6 +11,7 @@ public class Generator : MonoBehaviour
 
 	private SpriteRenderer parentRenderer;
 	private Vector3 baseLocalPos;
+	private float commonerSpeed = 3f;
 
 	[SerializeField] int maxSpawnCount = 10; // 同時に存在できる最大数
 	private int currentSpawnCount = 0;
@@ -38,6 +39,17 @@ public class Generator : MonoBehaviour
 			Debug.Log("生成数制限により中断！");
 			return;
 		}
+		Fighter data = null;
+		if(index != 0)
+		{
+			data = FighterManager.Instance.fighterList.Find(f => f.fighter_id == index);
+			if(data == null)
+			{
+				Debug.LogWarning("Fighterデータが見つかりません: id=" + index);
+				return;
+			}
+		}
+
 		for (int i = 0; i < amount; i++)
 		{
 			// 少し位置ずらして生成（横に並べる例）
@@ -45,7 +57,7 @@ public class Generator : MonoBehaviour
 
 			GameObject prefabToSpawn;
 
-			if (index == 0)
+			if (index == 1)
 			{
 				// commoners[] からランダム選択
 				int rand = Random.Range(0, commoners.Length);
@@ -63,6 +75,16 @@ public class Generator : MonoBehaviour
 			{
 				mover.SetDirection(isFacingLeft ? Vector2.left : Vector2.right);
 				mover.SetGenerator(this);
+				if(index == 0)
+				{
+					mover.SetSpeed(commonerSpeed);
+					mover.SetLifetime(5);
+				}
+				else
+				{
+					mover.SetSpeed(data.speed);
+					mover.SetLifetime(4);
+				}
 			}
 			SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
 			if (sr != null)

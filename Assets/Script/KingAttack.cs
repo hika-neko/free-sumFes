@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class KingAttack : MonoBehaviour
 {
-	public enum CallingFighter
+	public enum SelectFighter
 	{
 		Commoner,
 		Warrior,
 		AdvanceWarrior,
 	}
 
-	[SerializeField] private CallingFighter selectFighter = CallingFighter.Commoner;
+	[SerializeField] private SelectFighter selectedFighter = SelectFighter.Commoner;
 	[SerializeField] private Animator animator;
 	[SerializeField] private AudioSource kingAudio;
 	[SerializeField] private AudioClip[] kingAudios;
@@ -31,27 +31,28 @@ public class KingAttack : MonoBehaviour
 
 	void Update()
 	{
-		if (!kingMovement.IsMoveEnabled) return;
+		if (!kingMovement.IsMoveEnabled ||
+			kingMovement.currentPhase == KingMovement.Phase.Castle) return;
 
 		if (Input.GetKeyDown(KeyCode.F1))
 		{
-			selectFighter = CallingFighter.Commoner;
+			selectedFighter = SelectFighter.Commoner;
 			PlaySoundAndLog(0, "•½–¯Wait");
 		}
 		if (Input.GetKeyDown(KeyCode.F2))
 		{
-			selectFighter = CallingFighter.Warrior;
+			selectedFighter = SelectFighter.Warrior;
 			PlaySoundAndLog(0, "íŽmWait");
 		}
 		if (Input.GetKeyDown(KeyCode.F3))
 		{
-			selectFighter = CallingFighter.AdvanceWarrior;
+			selectedFighter = SelectFighter.AdvanceWarrior;
 			PlaySoundAndLog(0, "ã‹‰íŽmWait");
 		}
 
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			Fighter selectedData = GetSelectedFighter(selectFighter.ToString());
+			Fighter selectedData = GetSelectedFighter(selectedFighter);
 			if (selectedData != null && selectedData.unlocked == 1 && KingMoneyManager.Instance.money >= selectedData.cost)
 			{
 				KingMoneyManager.Instance.TryUseMoney(selectedData.cost);
@@ -68,17 +69,15 @@ public class KingAttack : MonoBehaviour
 			}
 		}
 	}
-
-
-	private Fighter GetSelectedFighter(string kind)
-	{
-		return fighterList.Find(f => f.kind == kind);
-	}
-
 	private void PlaySoundAndLog(int audioIndex, string log)
 	{
 		kingAudio.clip = kingAudios[audioIndex];
 		kingAudio.Play();
 		Debug.Log(log);
+	}
+	private Fighter GetSelectedFighter(SelectFighter selected)
+	{
+		// enum‚Ì–¼‘Oi"Commoner"‚È‚Çj‚Æ kind ‚ð”äŠr
+		return fighterList.Find(f => f.kind == selected.ToString());
 	}
 }

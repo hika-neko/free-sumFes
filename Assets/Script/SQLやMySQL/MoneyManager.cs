@@ -22,7 +22,7 @@ public class MoneyManager : MonoBehaviour
 		StartCoroutine(ChangeMoneyOnServer(kingId, delta));
 	}
 
-	private IEnumerator ChangeMoneyOnServer(int kingId, int delta)
+	public IEnumerator ChangeMoneyOnServer(int kingId, int delta)
 	{
 		WWWForm form = new WWWForm();
 		form.AddField("king_id", kingId);

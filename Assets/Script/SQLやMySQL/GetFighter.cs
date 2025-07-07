@@ -51,5 +51,9 @@ public class GetFighter : MonoBehaviour
             Debug.Log($"ID:{f.fighter_id} 種類:{f.kind} コスト:{f.cost} 攻撃力:{f.attack} " +
                 $"速度:{f.speed} プレハブ名:{f.prefab_name} アンロック:{f.unlocked} 初回解放コスト:{f.unlock_cost}");
         }
+        foreach(var f in FighterManager.Instance.fighterList)
+        {
+            Debug.Log($"{f.kind} 解放状況: {f.unlocked}");
+        }
     }
 }

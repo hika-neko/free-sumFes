@@ -6,11 +6,20 @@ using UnityEngine.SceneManagement;
 
 public class KingMovement : MonoBehaviour
 {
+	public enum Phase
+	{
+		Castle,
+		Expedition
+	}
+
+	[SerializeField] public Phase currentPhase = Phase.Expedition;
 	[SerializeField] private float moveSpeed = 5f;
 	[SerializeField] private float jumpForce = 5f;
 	[SerializeField] private LayerMask groundLayer;
 	[SerializeField] private Transform groundCheck;
 	[SerializeField] private float groundCheckRadius = 0.3f;
+	[SerializeField] TextMeshProUGUI phaseText;
+	[SerializeField] SceneSwitch sceneSwitch;
 
 	private Rigidbody2D rb;
 	private Vector2 movement;
@@ -32,6 +41,8 @@ public class KingMovement : MonoBehaviour
 
 	void Update()
 	{
+		phaseText.text = "Phase:" + currentPhase.ToString();
+
 		movement.x = Input.GetAxis("Horizontal");
 		movement.Normalize();
 
@@ -53,27 +64,41 @@ public class KingMovement : MonoBehaviour
 			sr.flipX = movement.x < 0;
 		}
 
-		if (Input.GetButtonDown("Jump") && isGrounded && IsMoveEnabled)
+		if (Input.GetKeyDown(KeyCode.Tab))
 		{
-			rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-			animator.SetTrigger("Jump");
+			currentPhase = currentPhase == Phase.Castle ? Phase.Expedition : Phase.Castle;
+			sceneSwitch.ToggleMode();
 		}
 
-		timer += Time.deltaTime;
-		if (timer >= moneyTime)
-		{
-			KingMoneyManager.Instance.AddMoney(1000);
-			timer = 0f;
-		}
 
-		// 数字キーで解放処理
-		for (int i = 1; i <= 9; i++)
+		switch (currentPhase)
 		{
-			if (Input.GetKeyDown(KeyCode.Alpha0 + i) || Input.GetKeyDown(KeyCode.Keypad0 + i))
+			case Phase.Castle:
+			timer += Time.deltaTime;
+			if (timer >= moneyTime)
 			{
-				Debug.Log($"解放キーが押されました: Fighter ID = {i}");
-				TryUnlockFighterById(i);
+				KingMoneyManager.Instance.AddMoney(1000);
+				timer = 0f;
 			}
+
+			// 数字キーで解放処理
+			for (int i = 1; i <= 9; i++)
+			{
+				if (Input.GetKeyDown(KeyCode.Alpha0 + i) || Input.GetKeyDown(KeyCode.Keypad0 + i))
+				{
+					Debug.Log($"解放キーが押されました: Fighter ID = {i}");
+					TryUnlockFighterById(i);
+				}
+			}
+			break;
+
+			case Phase.Expedition:
+			if (Input.GetButtonDown("Jump") && isGrounded && IsMoveEnabled)
+			{
+				rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+				animator.SetTrigger("Jump");
+			}
+			break;
 		}
 	}
 
@@ -113,6 +138,7 @@ public class KingMovement : MonoBehaviour
 			{
 				target.unlocked = 1;
 				StartCoroutine(FighterManager.Instance.UnlockFighterOnServer(target.fighter_id));
+				KingMoneyManager.Instance.TryUseMoney(target.unlock_cost);
 				Debug.Log("解放完了: id = " + id);
 			}
 			else

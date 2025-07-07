@@ -138,7 +138,7 @@ public class KingMovement : MonoBehaviour
 			{
 				target.unlocked = 1;
 				StartCoroutine(FighterManager.Instance.UnlockFighterOnServer(target.fighter_id));
-				KingMoneyManager.Instance.TryUseMoney(target.unlock_cost);
+			//	KingMoneyManager.Instance.TryUseMoney(target.unlock_cost);
 				Debug.Log("‰ð•úŠ®—¹: id = " + id);
 			}
 			else

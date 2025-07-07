@@ -32,9 +32,9 @@ public class Generator : MonoBehaviour
 		newPos.x = parentRenderer.flipX ? baseLocalPos.x : -baseLocalPos.x;
 		transform.localPosition = newPos;
 	}
-	public void Spawner(bool isFacingLeft, int amount, int index)
+	public void Spawner(bool isFacingLeft, int level, int index)
 	{
-		if(currentSpawnCount + amount > maxSpawnCount)
+		if(currentSpawnCount + level > maxSpawnCount)
 		{
 			Debug.Log("生成数制限により中断！");
 			return;
@@ -50,7 +50,7 @@ public class Generator : MonoBehaviour
 			}
 		}
 
-		for (int i = 0; i < amount; i++)
+		for (int i = 0; i < level; i++)
 		{
 			// 少し位置ずらして生成（横に並べる例）
 			Vector3 offset = new Vector3(i * 0.5f * (isFacingLeft ? -1 : 1), 0, 0);

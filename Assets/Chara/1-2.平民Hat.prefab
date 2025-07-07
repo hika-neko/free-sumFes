@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4313495201512623306}
   m_Layer: 0
   m_Name: "1-2.\u5E73\u6C11Hat"
-  m_TagString: Untagged
+  m_TagString: Ally
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 054f37a257ba18446b693e50ba6d53a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  moveSpeed: 0
   maxDistance: 10
 --- !u!114 &4313495201512623306
 MonoBehaviour:

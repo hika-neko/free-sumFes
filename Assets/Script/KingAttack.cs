@@ -57,7 +57,7 @@ public class KingAttack : MonoBehaviour
 			{
 				KingMoneyManager.Instance.TryUseMoney(selectedData.cost);
 
-				generator.Spawner(sr.flipX, selectedData.attack, selectedData.fighter_id);
+				generator.Spawner(sr.flipX, selectedData.fighter_level, selectedData.fighter_id);
 
 				kingAudio.clip = kingAudios[1];
 				kingAudio.Play();
@@ -78,6 +78,6 @@ public class KingAttack : MonoBehaviour
 	private Fighter GetSelectedFighter(SelectFighter selected)
 	{
 		// enum‚Ì–¼‘Oi"Commoner"‚È‚Çj‚Æ kind ‚ð”äŠr
-		return fighterList.Find(f => f.kind == selected.ToString());
+		return fighterList.Find(f => f.fighter_kind == selected.ToString());
 	}
 }

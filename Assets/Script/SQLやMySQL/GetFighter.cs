@@ -7,14 +7,15 @@ using UnityEngine.Networking;
 [System.Serializable]
 public class Fighter
 {
-    public int fighter_id;              // id
-    public string kind;         // 種類
+    public int fighter_id;      // id
+    public string fighter_kind; // 種類
     public int cost;            // コスト
+    public int fighter_level;   // ファイターレベル
     public int attack;          // 攻撃力
     public float speed;         // 速度
     public string prefab_name;  // プレハブ名
     public int unlocked;        // 解放済みか
-	public int unlock_cost;      // 初回解放コスト
+	public int unlock_cost;     // 初回解放コスト
 }
 
 [System.Serializable]
@@ -48,12 +49,13 @@ public class GetFighter : MonoBehaviour
 		FighterListWrapper data = JsonUtility.FromJson<FighterListWrapper>(json);
         foreach(var f in data.fighter)
         {
-            Debug.Log($"ID:{f.fighter_id} 種類:{f.kind} コスト:{f.cost} 攻撃力:{f.attack} " +
-                $"速度:{f.speed} プレハブ名:{f.prefab_name} アンロック:{f.unlocked} 初回解放コスト:{f.unlock_cost}");
+            Debug.Log($"ID:{f.fighter_id} 種類:{f.fighter_kind} コスト:{f.cost}" +
+                $" レベル:{f.fighter_level} 攻撃力:{f.attack} 速度:{f.speed}" + 
+                $"プレハブ名:{f.prefab_name} アンロック:{f.unlocked} 初回解放コスト:{f.unlock_cost}");
         }
         foreach(var f in FighterManager.Instance.fighterList)
         {
-            Debug.Log($"{f.kind} 解放状況: {f.unlocked}");
+            Debug.Log($"{f.fighter_kind} 解放状況: {f.unlocked}");
         }
     }
 }

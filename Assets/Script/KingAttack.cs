@@ -53,19 +53,34 @@ public class KingAttack : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			Fighter selectedData = GetSelectedFighter(selectedFighter);
-			if (selectedData != null && selectedData.unlocked == 1 && KingMoneyManager.Instance.money >= selectedData.cost)
+			if(selectedData != null)
 			{
-				KingMoneyManager.Instance.TryUseMoney(selectedData.cost);
+				int spawnLevel = selectedData.fighter_level;
+				int totalCost;
 
-				generator.Spawner(sr.flipX, selectedData.fighter_level, selectedData.fighter_id);
+				if(spawnLevel == 1)
+				{
+					totalCost = selectedData.cost;
+				}
+				else
+				{
+					float discountRate = 0.95f;
+					totalCost = Mathf.CeilToInt(selectedData.cost * spawnLevel * discountRate);
+				}
 
-				kingAudio.clip = kingAudios[1];
-				kingAudio.Play();
-				animator.SetTrigger("Attack");
-			}
-			else
-			{
-				Debug.Log("召喚失敗：解放されていないか所持金不足");
+				if (selectedData.unlocked == 1 && KingMoneyManager.Instance.money >= totalCost)
+				{
+					KingMoneyManager.Instance.TryUseMoney(totalCost);
+					generator.Spawner(sr.flipX, spawnLevel, selectedData.fighter_id);
+
+					kingAudio.clip = kingAudios[1];
+					kingAudio.Play();
+					animator.SetTrigger("Attack");
+				}
+				else
+				{
+					Debug.Log("召喚失敗：解放されていないか所持金不足");
+				}
 			}
 		}
 	}

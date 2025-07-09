@@ -8,6 +8,7 @@ public class Generator : MonoBehaviour
 {
 	[SerializeField] GameObject[] commoners;
 	[SerializeField] GameObject[] fighters;
+	[SerializeField] GameObject parent;
 
 	private SpriteRenderer parentRenderer;
 	private Vector3 baseLocalPos;
@@ -69,12 +70,13 @@ public class Generator : MonoBehaviour
 				prefabToSpawn = fighters[trueIndex];
 			}
 
-			GameObject obj = Instantiate(prefabToSpawn, transform.position + offset, Quaternion.identity, transform);
+			GameObject obj = Instantiate(prefabToSpawn, transform.position + offset, Quaternion.identity);
 			Mover mover = obj.GetComponent<Mover>();
 			if (mover != null)
 			{
 				mover.SetDirection(isFacingLeft ? Vector2.left : Vector2.right);
 				mover.SetGenerator(this);
+				mover.SetPower(data.attack);
 				if(index == 0)
 				{
 					mover.SetSpeed(commonerSpeed);

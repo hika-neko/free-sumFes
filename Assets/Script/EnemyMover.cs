@@ -12,6 +12,22 @@ public class EnemyMover : MonoBehaviour
 
 	private bool isGrounded;
 
+	public void SetDirection(bool fromRight)
+	{
+		moveDirection = fromRight ? Vector2.left : Vector2.right;
+
+		// Œ©‚½–Ú‚ğ”½“]
+		var sr = GetComponent<SpriteRenderer>();
+		if (sr != null)
+		{
+			sr.flipX = fromRight; // ‰E‚©‚ç—ˆ‚½‚Æ‚«‚¾‚¯”½“]
+		}
+	}
+	public void SetMoveSpeed(float speed)
+	{
+		moveSpeed = speed;
+	}
+
 	void Update()
 	{
 		// Ú’n”»’è
@@ -20,6 +36,16 @@ public class EnemyMover : MonoBehaviour
 		if (isGrounded)
 		{
 			transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+		}
+	}
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		// ’n–Ê‚É‚ÍG‚ê‚Ä‚àÁ‚³‚È‚¢
+		if (collision.CompareTag("Ground") || collision.CompareTag("Player")
+			|| collision.CompareTag("Gc"))
+		{
+			// ’n–Ê‚ÉG‚Á‚½‚¾‚¯‚È‚Ì‚Å‰½‚à‚µ‚È‚¢
+			return;
 		}
 	}
 }

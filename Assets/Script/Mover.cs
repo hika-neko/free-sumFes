@@ -11,6 +11,7 @@ public class Mover : MonoBehaviour
 	[SerializeField] private float maxDistance = 10f; // —£‚ê‚·‚¬‚é‹——£
 	private float lifetime = 5f;
 	private float timer = 0f;
+	private int attackPower;
 
 	void Start()
 	{
@@ -33,6 +34,11 @@ public class Mover : MonoBehaviour
 	{
 		lifetime = time;
 	}
+	public void SetPower(int attack)
+	{
+		attackPower = attack;
+	}
+
 	void Update()
 	{
 		// –ˆƒtƒŒ[ƒ€ˆÚ“®
@@ -48,6 +54,23 @@ public class Mover : MonoBehaviour
 				generatorRef.DecreaseSpawnCount();
 			}
 			Destroy(gameObject);
+		}
+	}
+
+	void OnTriggerEnter2D(Collider2D other)
+	{
+		if(other.CompareTag("Enemy"))
+		{
+			EnemyStatus enemyStatus = other.GetComponent<EnemyStatus>();
+			if(enemyStatus != null)
+			{
+				enemyStatus.TakeDamage(attackPower);
+				Destroy(gameObject);
+				if (generatorRef != null)
+				{
+					generatorRef.DecreaseSpawnCount();
+				}
+			}
 		}
 	}
 }

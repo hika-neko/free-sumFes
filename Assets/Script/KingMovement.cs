@@ -77,7 +77,7 @@ public class KingMovement : MonoBehaviour
 			timer += Time.deltaTime;
 			if (timer >= moneyTime)
 			{
-				KingMoneyManager.Instance.AddMoney(1000);
+				KingMoneyManager.Instance.AddMoney(100000);
 				timer = 0f;
 			}
 

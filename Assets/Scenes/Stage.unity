@@ -377,7 +377,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a9f22e113399b14884904291aa77e95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 6963749859001705159, guid: eef7338f720d5bc4aba7bd2b085cc03e, type: 3}
   spawnInterval: 2.5
 --- !u!4 &499637528
 Transform:
@@ -410,7 +409,7 @@ GameObject:
   - component: {fileID: 531616946}
   m_Layer: 6
   m_Name: Ground
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

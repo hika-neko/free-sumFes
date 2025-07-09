@@ -16,6 +16,8 @@ public class EnemyManager : MonoBehaviour
 	void Start()
 	{
 		StartCoroutine(GetEnemyFromServer());
+		int stageId = 1;
+		StartCoroutine(GetStageEnemies(stageId));
 	}
 
 	IEnumerator GetEnemyFromServer()
@@ -32,30 +34,26 @@ public class EnemyManager : MonoBehaviour
 			{
 				string json = www.downloadHandler.text;
 				EnemyListWrapper wrapper = JsonUtility.FromJson<EnemyListWrapper>(json);
-				enemyList = wrapper.enemys;
+				enemyList = wrapper.enemy;
 				Debug.Log("enemy‚ğ " + enemyList.Count + " Œæ“¾");
 			}
 		}
 	}
+	public IEnumerator GetStageEnemies(int stageId)
+	{
+		string url = $"http://localhost/Unity˜AŒg/get_stage_enemys.php?stage_id={stageId}";
+		UnityWebRequest www = UnityWebRequest.Get(url);
+		yield return www.SendWebRequest();
 
-	//public IEnumerator UnlockFighterOnServer(int fighterId)
-	//{
-	//	string url = "http://localhost/Unity˜AŒg/update_fighter_unlock.php";
-	//	WWWForm form = new WWWForm();
-	//	//form.AddField("king_id", king_id);
-	//	form.AddField("fighter_id", fighterId);
+		if (www.result != UnityWebRequest.Result.Success)
+		{
+			Debug.LogError("“Gƒf[ƒ^æ“¾¸”s: " + www.error);
+			yield break;
+		}
 
-	//	using (UnityWebRequest www = UnityWebRequest.Post(url, form))
-	//	{
-	//		yield return www.SendWebRequest();
-	//		if (www.result != UnityWebRequest.Result.Success)
-	//		{
-	//			Debug.LogError("’ÊM¸”s " + www.error);
-	//		}
-	//		else
-	//		{
-	//			Debug.Log("‰ğ•ú¬Œ÷: " + www.downloadHandler.text);
-	//		}
-	//	}
-	//}
+		string json = www.downloadHandler.text;
+		EnemyListWrapper wrapper = JsonUtility.FromJson<EnemyListWrapper>(json);
+		enemyList = wrapper.enemy;
+		Debug.Log($"ƒXƒe[ƒW{stageId}‚Ì“G‚ğ {enemyList.Count} Œæ“¾");
+	}
 }

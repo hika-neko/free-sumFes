@@ -8,7 +8,8 @@ using UnityEngine.Networking;
 public class Enemy
 {
 	public int enemy_id;		  // id
-	public string enemy_kind;	  // 種類
+	public string enemy_kind;     // 種類
+	public int health_point;	  // hp
 	public int attack;			  // 攻撃力
 	public float speed;			  // 速度
 	public string prefab_name;	  // プレハブ名
@@ -19,7 +20,7 @@ public class Enemy
 [System.Serializable]
 public class EnemyListWrapper
 {
-	public List<Enemy> enemys;
+	public List<Enemy> enemy;
 }
 
 
@@ -45,15 +46,15 @@ public class GetEnemy : MonoBehaviour
 
 		string json = www.downloadHandler.text;
 		EnemyListWrapper data = JsonUtility.FromJson<EnemyListWrapper>(json);
-		foreach (var e in data.enemys)
+		foreach (var e in data.enemy)
 		{
 			Debug.Log($"ID:{e.enemy_id} 種類:{e.enemy_kind} " +
-				$"攻撃力: {e.attack} 速度:{e.speed}" +
+				$"攻撃力: {e.attack} 速度:{e.speed} hp:{e.health_point}" +
 				$"プレハブ名: {e.prefab_name} ボスか: {e.is_boss} 収集品: {e.drop_item}");
 		}
 		foreach (var e in EnemyManager.Instance.enemyList)
 		{
-			Debug.Log($"{e.enemy_kind}  ボスか:{e.is_boss}");
+			Debug.Log($"{e.enemy_kind} -> ボスか:{e.is_boss}");
 		}
 	}
 }

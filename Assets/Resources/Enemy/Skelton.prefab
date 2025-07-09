@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6582133750326766393}
   m_Layer: 0
   m_Name: Square
-  m_TagString: Untagged
+  m_TagString: Gc
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -145,6 +145,8 @@ GameObject:
   - component: {fileID: 7945584872932510270}
   - component: {fileID: 188486823289683738}
   - component: {fileID: 2776595045232480766}
+  - component: {fileID: -5674224546084983577}
+  - component: {fileID: -3118959608088794098}
   m_Layer: 0
   m_Name: Skelton
   m_TagString: Enemy
@@ -162,7 +164,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 17.79, y: -2.34, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 2.8, y: 2.8, z: 2.8}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7991408792794069617}
@@ -376,3 +378,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-5674224546084983577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6963749859001705159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00447b743f070e74992c67021d6d5103, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-3118959608088794098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6963749859001705159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcbeaa47a6124274d8f4aa37413b7822, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHp: 0

@@ -49,7 +49,7 @@ public class SceneSwitch : MonoBehaviour
 		StartCoroutine(SetActiveAfterLoad(newScene));
 	}
 
-	System.Collections.IEnumerator SetActiveAfterLoad(string sceneName)
+	IEnumerator SetActiveAfterLoad(string sceneName)
 	{
 		yield return null;
 		Scene loaded = SceneManager.GetSceneByName(sceneName);

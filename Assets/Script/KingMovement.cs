@@ -9,10 +9,20 @@ public class KingMovement : MonoBehaviour
 	public enum Phase
 	{
 		Castle,
-		Expedition
+		Expedition,
+		Saloon,
+		WeaponShop
 	}
 
-	[SerializeField] public Phase currentPhase = Phase.Expedition;
+	private Dictionary<Phase, string> phaseNames = new Dictionary<Phase, string>
+	{
+		{Phase.Castle, "城下町" },
+		{Phase.Expedition, "遠征" },
+		{Phase.Saloon, "酒場"},
+		{Phase.WeaponShop, "鍛冶屋"}
+	};
+
+	[SerializeField] public Phase currentPhase = Phase.Castle;
 	[SerializeField] private float moveSpeed = 5f;
 	[SerializeField] private float jumpForce = 5f;
 	[SerializeField] private LayerMask groundLayer;
@@ -26,6 +36,7 @@ public class KingMovement : MonoBehaviour
 	private SpriteRenderer sr;
 	private Animator animator;
 	private bool isGrounded;
+	private bool frontDoor;
 
 	private float moneyTime = 2.5f;
 	private float timer = 0f;
@@ -41,8 +52,7 @@ public class KingMovement : MonoBehaviour
 
 	void Update()
 	{
-		phaseText.text = "Phase:" + currentPhase.ToString();
-
+		UpdatePhaseText(currentPhase);
 		movement.x = Input.GetAxis("Horizontal");
 		movement.Normalize();
 
@@ -74,31 +84,31 @@ public class KingMovement : MonoBehaviour
 		switch (currentPhase)
 		{
 			case Phase.Castle:
-			timer += Time.deltaTime;
-			if (timer >= moneyTime)
-			{
-				KingMoneyManager.Instance.AddMoney(100000);
-				timer = 0f;
-			}
-
-			// 数字キーで解放処理
-			for (int i = 1; i <= 9; i++)
-			{
-				if (Input.GetKeyDown(KeyCode.Alpha0 + i) || Input.GetKeyDown(KeyCode.Keypad0 + i))
+				timer += Time.deltaTime;
+				if (timer >= moneyTime)
 				{
-					Debug.Log($"解放キーが押されました: Fighter ID = {i}");
-					TryUnlockFighterById(i);
+					KingMoneyManager.Instance.AddMoney(100000);
+					timer = 0f;
 				}
-			}
-			break;
+
+				// 数字キーで解放処理
+				for (int i = 1; i <= 9; i++)
+				{
+					if (Input.GetKeyDown(KeyCode.Alpha0 + i) || Input.GetKeyDown(KeyCode.Keypad0 + i))
+					{
+						Debug.Log($"解放キーが押されました: Fighter ID = {i}");
+						TryUnlockFighterById(i);
+					}
+				}
+				break;
 
 			case Phase.Expedition:
-			if (Input.GetButtonDown("Jump") && isGrounded && IsMoveEnabled)
-			{
-				rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-				animator.SetTrigger("Jump");
-			}
-			break;
+				if (Input.GetButtonDown("Jump") && isGrounded && IsMoveEnabled)
+				{
+					rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+					animator.SetTrigger("Jump");
+				}
+				break;
 		}
 	}
 
@@ -113,7 +123,14 @@ public class KingMovement : MonoBehaviour
 	{
 		IsMoveEnabled = enabled;
 	}
+	public void UpdatePhaseText(Phase currentPhase)
+	{
+		string displayName = phaseNames.ContainsKey(currentPhase)
+			? phaseNames[currentPhase]
+			: currentPhase.ToString(); // fallback
 
+		phaseText.text = "Phase:" + displayName;
+	}
 	public void TryUnlockFighterById(int id)
 	{
 		if (FighterManager.Instance.fighterList == null)
@@ -121,7 +138,7 @@ public class KingMovement : MonoBehaviour
 			Debug.Log("fighterListがnull");
 			return;
 		}
-		
+
 		Fighter target = FighterManager.Instance.fighterList.Find(f => f.fighter_id == id);
 
 		if (target == null)
@@ -138,7 +155,7 @@ public class KingMovement : MonoBehaviour
 			{
 				target.unlocked = 1;
 				StartCoroutine(FighterManager.Instance.UnlockFighterOnServer(target.fighter_id));
-			//	KingMoneyManager.Instance.TryUseMoney(target.unlock_cost);
+				//	KingMoneyManager.Instance.TryUseMoney(target.unlock_cost);
 				Debug.Log("解放完了: id = " + id);
 			}
 			else
@@ -149,6 +166,30 @@ public class KingMovement : MonoBehaviour
 		else
 		{
 			Debug.Log("すでに解放済み: id = " + id);
+		}
+	}
+
+	private void OnTriggerStay2D(Collider2D other)
+	{
+		Debug.Log(other.gameObject.name +", " + other.gameObject.tag);
+		if (/*Input.GetButtonDown("Jump") */
+			Input.GetKeyDown(KeyCode.Space) && other.CompareTag("Door"))
+		{
+			Debug.Log("上押したよ");
+			DoorTrigger doorTrigger = other.GetComponent<DoorTrigger>();
+			if (doorTrigger != null)
+			{
+				int num = doorTrigger.GetDoorId();
+				Debug.Log(num);
+				if (num == 1)
+				{
+					currentPhase = Phase.Saloon;
+				}
+				else if (num == 2)
+				{
+					currentPhase = Phase.WeaponShop;
+				}
+			}
 		}
 	}
 }

@@ -5,7 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class SceneSwitch : MonoBehaviour
 {
-	public enum Mode { Castle, Fight }
+	public enum Mode
+	{
+		Castle, 
+		Fight,
+	}
 
 	[SerializeField] private Mode currentMode = Mode.Castle;
 

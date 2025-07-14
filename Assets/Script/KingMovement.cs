@@ -37,6 +37,7 @@ public class KingMovement : MonoBehaviour
 	private Animator animator;
 	private bool isGrounded;
 	private bool frontDoor;
+	Collider2D nearDoorCollider;
 
 	private float moneyTime = 2.5f;
 	private float timer = 0f;
@@ -89,6 +90,23 @@ public class KingMovement : MonoBehaviour
 				{
 					KingMoneyManager.Instance.AddMoney(100000);
 					timer = 0f;
+				}
+				if(Input.GetButtonDown("Jump") && frontDoor)
+				{
+					DoorTrigger doorTrigger = nearDoorCollider.GetComponent<DoorTrigger>();
+					int num = doorTrigger.GetDoorId();
+					if(num == 0)
+					{
+						currentPhase = Phase.Castle;
+					}
+					if(num == 1)
+					{
+						currentPhase = Phase.WeaponShop;
+					}
+					if(num == 2)
+					{
+						currentPhase = Phase.Saloon;
+					}
 				}
 
 				// êîéöÉLÅ[Ç≈âï˙èàóù
@@ -171,25 +189,18 @@ public class KingMovement : MonoBehaviour
 
 	private void OnTriggerStay2D(Collider2D other)
 	{
-		Debug.Log(other.gameObject.name +", " + other.gameObject.tag);
-		if (/*Input.GetButtonDown("Jump") */
-			Input.GetKeyDown(KeyCode.Space) && other.CompareTag("Door"))
+		if(other.CompareTag("Door"))
 		{
-			Debug.Log("è„âüÇµÇΩÇÊ");
-			DoorTrigger doorTrigger = other.GetComponent<DoorTrigger>();
-			if (doorTrigger != null)
-			{
-				int num = doorTrigger.GetDoorId();
-				Debug.Log(num);
-				if (num == 1)
-				{
-					currentPhase = Phase.Saloon;
-				}
-				else if (num == 2)
-				{
-					currentPhase = Phase.WeaponShop;
-				}
-			}
+			frontDoor = true;
+			nearDoorCollider = other;
+		}
+	}
+	private void OnTriggerExit2D(Collider2D other)
+	{
+		if(other.CompareTag("Door"))
+		{
+			frontDoor = false;
+			nearDoorCollider = null;
 		}
 	}
 }

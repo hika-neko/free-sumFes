@@ -37,7 +37,10 @@ public class KingMovement : MonoBehaviour
 	private Animator animator;
 	private bool isGrounded;
 	private bool frontDoor;
+	private bool nearTalker;
+	private bool unlockNow = false;
 	Collider2D nearDoorCollider;
+	Collider2D nearTalkerCollider;
 
 	private float moneyTime = 2.5f;
 	private float timer = 0f;
@@ -54,33 +57,60 @@ public class KingMovement : MonoBehaviour
 	void Update()
 	{
 		UpdatePhaseText(currentPhase);
-		movement.x = Input.GetAxis("Horizontal");
-		movement.Normalize();
-
-		isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
-		animator.SetBool("IsGrounded", isGrounded);
-
-		if (Mathf.Abs(movement.x) < 0.01f)
+		if (IsMoveEnabled)
 		{
-			animator.SetFloat("MoveX", 0f);
-		}
-		else
-		{
-			animator.SetFloat("MoveX", Mathf.Abs(movement.x), 0.05f, Time.deltaTime);
-		}
+			movement.x = Input.GetAxis("Horizontal");
+			movement.Normalize();
+			isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+			animator.SetBool("IsGrounded", isGrounded);
+			if (Mathf.Abs(movement.x) < 0.01f)
+			{
+				animator.SetFloat("MoveX", 0f);
+			}
+			else
+			{
+				animator.SetFloat("MoveX", Mathf.Abs(movement.x), 0.05f, Time.deltaTime);
+			}
+			if (movement.x != 0)
+			{
+				sr.flipX = movement.x < 0;
+			}
+			if (Input.GetButtonDown("Jump") && frontDoor)
+			{
+				DoorTrigger doorTrigger = nearDoorCollider.GetComponent<DoorTrigger>();
+				int doorId = doorTrigger.GetDoorId();
+				switch (doorId)
+				{
+					// 城-鍛冶屋
+					case 0:
+						currentPhase = Phase.WeaponShop;
+						SceneSwitch.Instance.LoadModeScene(SceneSwitch.Phase.WeaponShop, "Castle");
+						break;
 
-		if (movement.x != 0)
-		{
-			sr.flipX = movement.x < 0;
-		}
+					// 城-酒場
+					case 1:
+						currentPhase = Phase.Saloon;
+						SceneSwitch.Instance.LoadModeScene(SceneSwitch.Phase.Saloon, "Castle");
+						break;
 
-		if (Input.GetKeyDown(KeyCode.Tab))
-		{
-			currentPhase = currentPhase == Phase.Castle ? Phase.Expedition : Phase.Castle;
-			sceneSwitch.ToggleMode();
-		}
+					// 鍛冶屋-城
+					case 2:
+						currentPhase = Phase.Castle;
+						SceneSwitch.Instance.LoadModeScene(SceneSwitch.Phase.Castle, "WeaponShop");
+						break;
 
+					// 酒場-城
+					case 3:
+						currentPhase = Phase.Castle;
+						SceneSwitch.Instance.LoadModeScene(SceneSwitch.Phase.Castle, "Saloon");
+						break;
+
+					default:
+						Debug.LogWarning("未定義のTalk ID: " + doorId);
+						break;
+				}
+			}
+		}
 
 		switch (currentPhase)
 		{
@@ -91,42 +121,53 @@ public class KingMovement : MonoBehaviour
 					KingMoneyManager.Instance.AddMoney(100000);
 					timer = 0f;
 				}
-				if(Input.GetButtonDown("Jump") && frontDoor)
+			break;
+				
+			case Phase.WeaponShop:
+			// 数字キーで解放処理
+			for (int i = 1; i <= 9; i++)
+			{
+				if ((Input.GetKeyDown(KeyCode.Alpha0 + i) || Input.GetKeyDown(KeyCode.Keypad0 + i)) 
+					/*&&*/ )
 				{
-					DoorTrigger doorTrigger = nearDoorCollider.GetComponent<DoorTrigger>();
-					int num = doorTrigger.GetDoorId();
-					if(num == 0)
+					Debug.Log($"解放キーが押されました: Fighter ID = {i}");
+					TryUnlockFighterById(i);
+				}
+			}
+			if (Input.GetButtonDown("Submit") && nearTalker && !unlockNow)
+			{
+				unlockNow = true;
+				IsMoveEnabled = false;
+				TalkTrigger talkerTrigger = nearTalkerCollider.GetComponent<TalkTrigger>();
+				if(talkerTrigger != null)
+				{
+					int talkerId = talkerTrigger.GetTalkerId();
+					if (talkerId != 1) return;
+					else if(talkerId == 1)
 					{
-						currentPhase = Phase.Castle;
-					}
-					if(num == 1)
-					{
-						currentPhase = Phase.WeaponShop;
-					}
-					if(num == 2)
-					{
-						currentPhase = Phase.Saloon;
+						FighterUnlock.Instance.Open();
 					}
 				}
+			}
 
-				// 数字キーで解放処理
-				for (int i = 1; i <= 9; i++)
-				{
-					if (Input.GetKeyDown(KeyCode.Alpha0 + i) || Input.GetKeyDown(KeyCode.Keypad0 + i))
-					{
-						Debug.Log($"解放キーが押されました: Fighter ID = {i}");
-						TryUnlockFighterById(i);
-					}
-				}
-				break;
+			else if(Input.GetButtonDown("Cancel") && nearTalker && unlockNow)
+			{
+				unlockNow = false;
+				FighterUnlock.Instance.Close();
+				IsMoveEnabled = true;
+			}
+			break;
 
+			case Phase.Saloon: 
+			
+			break;
 			case Phase.Expedition:
-				if (Input.GetButtonDown("Jump") && isGrounded && IsMoveEnabled)
-				{
-					rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-					animator.SetTrigger("Jump");
-				}
-				break;
+			if (Input.GetButtonDown("Jump") && isGrounded && IsMoveEnabled)
+			{
+				rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+				animator.SetTrigger("Jump");
+			}
+			break;
 		}
 	}
 
@@ -194,6 +235,11 @@ public class KingMovement : MonoBehaviour
 			frontDoor = true;
 			nearDoorCollider = other;
 		}
+		else if(other.CompareTag("Talker"))
+		{
+			nearTalker = true;
+			nearTalkerCollider = other;
+		}
 	}
 	private void OnTriggerExit2D(Collider2D other)
 	{
@@ -201,6 +247,11 @@ public class KingMovement : MonoBehaviour
 		{
 			frontDoor = false;
 			nearDoorCollider = null;
+		}
+		else if (other.CompareTag("Talker"))
+		{
+			nearTalker = false;
+			nearTalkerCollider = null;
 		}
 	}
 }

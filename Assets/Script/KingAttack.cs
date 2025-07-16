@@ -50,7 +50,7 @@ public class KingAttack : MonoBehaviour
 			PlaySoundAndLog(0, "ã‹‰ímWait");
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space))
+		if (Input.GetButtonDown("Attack"))
 		{
 			Fighter selectedData = GetSelectedFighter(selectedFighter);
 			if(selectedData != null)

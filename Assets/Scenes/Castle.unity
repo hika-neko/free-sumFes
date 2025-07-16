@@ -1334,7 +1334,7 @@ GameObject:
   - component: {fileID: 619235431}
   - component: {fileID: 619235434}
   m_Layer: 0
-  m_Name: doorId=2
+  m_Name: "doorId=1 / \u9152\u5834"
   m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1367,7 +1367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd0010b597ff87f42be6e61fe49cd0ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  door_id: 2
+  door_id: 1
 --- !u!61 &619235432
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1546,7 +1546,7 @@ GameObject:
   - component: {fileID: 1357236073}
   - component: {fileID: 1357236076}
   m_Layer: 0
-  m_Name: doorId=1
+  m_Name: "doorId=0 / \u935B\u51B6\u5C4B"
   m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1579,7 +1579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd0010b597ff87f42be6e61fe49cd0ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  door_id: 1
+  door_id: 0
 --- !u!61 &1357236074
 BoxCollider2D:
   m_ObjectHideFlags: 0

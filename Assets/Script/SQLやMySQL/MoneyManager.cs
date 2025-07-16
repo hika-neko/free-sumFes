@@ -14,7 +14,7 @@ public class MoneyManager : MonoBehaviour
 			return;
 		}
 		Instance = this;
-		DontDestroyOnLoad(gameObject); // シーンをまたいでも保持
+		// DontDestroyOnLoad(gameObject); // シーンをまたいでも保持
 	}
 
 	public void ChangeMoney(int kingId, int delta)

@@ -9,6 +9,7 @@ TagManager:
   - Ground
   - Gc
   - Door
+  - Talker
   layers:
   - Default
   - TransparentFX

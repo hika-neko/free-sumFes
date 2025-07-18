@@ -18,6 +18,15 @@ public class FighterManager : MonoBehaviour
 		StartCoroutine(GetFightersFromServer());
 	}
 
+	public void SetFighterList(List<Fighter> list)
+	{
+		fighterList = list;
+	}
+	public List<Fighter> GetFighterList()
+	{
+		return fighterList;
+	}
+
 	IEnumerator GetFightersFromServer()
 	{
 		using (UnityWebRequest www = UnityWebRequest.Get("http://localhost/Unity˜AŒg/get_fighters_info.php"))

@@ -45,13 +45,17 @@ public class KingMovement : MonoBehaviour
 	private float moneyTime = 2.5f;
 	private float timer = 0f;
 
-	public bool IsMoveEnabled { get; private set; } = true;
+	public bool IsMoveEnabled { get; set; } = true;
 
 	void Start()
 	{
 		rb = GetComponent<Rigidbody2D>();
 		sr = GetComponent<SpriteRenderer>();
 		animator = GetComponent<Animator>();
+		if(LoginUI.IsLoginUIActive)
+		{
+			IsMoveEnabled = false;
+		}
 	}
 
 	void Update()
@@ -123,17 +127,8 @@ public class KingMovement : MonoBehaviour
 				}
 			break;
 				
-			case Phase.WeaponShop:
-			// 数字キーで解放処理
-			for (int i = 1; i <= 9; i++)
-			{
-				if ((Input.GetKeyDown(KeyCode.Alpha0 + i) || Input.GetKeyDown(KeyCode.Keypad0 + i)) 
-					/*&&*/ )
-				{
-					Debug.Log($"解放キーが押されました: Fighter ID = {i}");
-					TryUnlockFighterById(i);
-				}
-			}
+			case Phase.Saloon:
+
 			if (Input.GetButtonDown("Submit") && nearTalker && !unlockNow)
 			{
 				unlockNow = true;
@@ -158,7 +153,7 @@ public class KingMovement : MonoBehaviour
 			}
 			break;
 
-			case Phase.Saloon: 
+			case Phase.WeaponShop: 
 			
 			break;
 			case Phase.Expedition:
@@ -189,43 +184,6 @@ public class KingMovement : MonoBehaviour
 			: currentPhase.ToString(); // fallback
 
 		phaseText.text = "Phase:" + displayName;
-	}
-	public void TryUnlockFighterById(int id)
-	{
-		if (FighterManager.Instance.fighterList == null)
-		{
-			Debug.Log("fighterListがnull");
-			return;
-		}
-
-		Fighter target = FighterManager.Instance.fighterList.Find(f => f.fighter_id == id);
-
-		if (target == null)
-		{
-			Debug.Log("Fighter targetがnull (id = " + id + ")");
-			return;
-		}
-
-		Debug.Log("Fighter見つかった: id = " + id + ", unlock = " + target.unlocked);
-
-		if (target.unlocked == 0)
-		{
-			if (KingMoneyManager.Instance.TryUseMoney(target.unlock_cost))
-			{
-				target.unlocked = 1;
-				StartCoroutine(FighterManager.Instance.UnlockFighterOnServer(target.fighter_id));
-				//	KingMoneyManager.Instance.TryUseMoney(target.unlock_cost);
-				Debug.Log("解放完了: id = " + id);
-			}
-			else
-			{
-				Debug.Log("お金足りません: cost = " + target.unlock_cost);
-			}
-		}
-		else
-		{
-			Debug.Log("すでに解放済み: id = " + id);
-		}
 	}
 
 	private void OnTriggerStay2D(Collider2D other)

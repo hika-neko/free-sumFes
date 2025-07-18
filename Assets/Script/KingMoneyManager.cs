@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static LoginUI;
 
 public class KingMoneyManager : MonoBehaviour
 {
 	public static KingMoneyManager Instance;
-	private int kingId = 1;
+	public int kingId = 1;
 
 	public int money { get; private set; } = 0;
 
@@ -31,6 +32,13 @@ public class KingMoneyManager : MonoBehaviour
 	public void AddMoney(int amount)
 	{
 		money += amount;
+		StartCoroutine(MoneyManager.Instance.ChangeMoneyOnServer(kingId, amount));
 		// ここでサーバー通知とかも呼ぶ
+	}
+	public void SetKingInfo(KingInfo info)
+	{
+		kingId = info.king_id;
+		money = info.money;
+		Debug.Log($"KingID: {kingId}, 所持金: {money}");
 	}
 }

@@ -57,5 +57,5 @@ public class GetFighter : MonoBehaviour
         {
             Debug.Log($"{f.fighter_kind} ‰ğ•úó‹µ: {f.unlocked}");
         }
-    }
+	}
 }

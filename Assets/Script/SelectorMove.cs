@@ -33,30 +33,10 @@ public class SelectorMove : MonoBehaviour
 				}
 			}
 
-			//if (Input.GetKeyDown(KeyCode.DownArrow))
-			//{
-			//	int next = currentIndex + columnCount;
-			//	if (next < fightersPanel.Count)
-			//	{
-			//		currentIndex = next;
-			//		MoveSelector();
-			//	}
-			//}
-
-			//if (Input.GetKeyDown(KeyCode.UpArrow))
-			//{
-			//	int prev = currentIndex - columnCount;
-			//	if (prev >= 0)
-			//	{
-			//		currentIndex = prev;
-			//		MoveSelector();
-			//	}
-			//}
-
 			if (Input.GetButtonDown("Submit"))
 			{
 				int fighterId = currentIndex + 2;
-				Debug.Log("選択中のファイターを解放: " + fighterId);
+				// Debug.Log("選択中のファイターを解放: " + fighterId);
 				FighterUnlock.Instance.TryUnlockFighterById(fighterId);
 			}
 		}

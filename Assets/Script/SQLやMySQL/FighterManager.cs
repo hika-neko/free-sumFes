@@ -7,10 +7,19 @@ public class FighterManager : MonoBehaviour
 {
 	public static FighterManager Instance;
 	public List<Fighter> fighterList = new List<Fighter>();
+	public HashSet<int> unlockedFighter = new HashSet<int>();
 
 	void Awake()
 	{
-		Instance = this;
+		if(Instance == null)
+		{
+			Instance = this;
+			DontDestroyOnLoad(gameObject);
+		}
+		else
+		{
+			Destroy(gameObject);
+		}
 	}
 
 	void Start()
@@ -45,14 +54,22 @@ public class FighterManager : MonoBehaviour
 				Debug.Log("fighter‚ğ " + fighterList.Count + " Œæ“¾");
 			}
 		}
+
+		foreach (var id in unlockedFighter)
+		{
+			Debug.Log("‰ğ•úÏ‚İID: " + id);
+		}
 	}
 
-	public IEnumerator UnlockFighterOnServer(int fighterId)
+	public IEnumerator UnlockFighterOnServer(int king_id, int fighter_id)
 	{
+		Debug.Log("UnlockkFighterOnServer‚É“ü‚Á‚½‚æ");
 		string url = "http://localhost/Unity˜AŒg/update_fighter_unlock.php";
 		WWWForm form = new WWWForm();
-		//form.AddField("king_id", king_id);
-		form.AddField("fighter_id", fighterId);
+		Debug.Log($"king_id: {king_id}, fighter_id: {fighter_id}");
+
+		form.AddField("king_id", king_id);
+		form.AddField("fighter_id", fighter_id);
 
 		using (UnityWebRequest www = UnityWebRequest.Post(url,form))
 		{

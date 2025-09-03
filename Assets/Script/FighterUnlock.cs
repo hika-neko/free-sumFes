@@ -55,7 +55,10 @@ public class FighterUnlock : MonoBehaviour
 		{
 			target.unlocked = 1;
 			Debug.Log($"‰ğ•ú¬Œ÷: id = {id}");
-			FighterManager.Instance.UnlockFighterOnServer(id);
+
+			int king_id = PlayerPrefs.GetInt("king_id");
+
+			StartCoroutine(FighterManager.Instance.UnlockFighterOnServer(king_id, id));
 		}
 		else
 		{

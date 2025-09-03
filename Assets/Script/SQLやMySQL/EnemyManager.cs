@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,8 +17,8 @@ public class EnemyManager : MonoBehaviour
 	void Start()
 	{
 		StartCoroutine(GetEnemyFromServer());
-		int stageId = 1;
-		StartCoroutine(GetStageEnemies(stageId));
+		int stageId = PlayerPrefs.GetInt("Player_Level");
+		StartCoroutine(WaitAndGetEnemies());
 	}
 
 	IEnumerator GetEnemyFromServer()
@@ -39,6 +40,17 @@ public class EnemyManager : MonoBehaviour
 			}
 		}
 	}
+	private IEnumerator WaitAndGetEnemies()
+	{
+		// stage_idがセットされるのを待つ
+		yield return new WaitUntil(() => PlayerPrefs.HasKey("Player_Level"));
+		yield return new WaitForSeconds(0.1f); // 念のため少し待つ
+
+		int stageId = PlayerPrefs.GetInt("Player_Level");
+		Debug.Log("ロードするPlayer_Level: " + stageId);
+		StartCoroutine(GetStageEnemies(stageId));
+	}
+
 	public IEnumerator GetStageEnemies(int stageId)
 	{
 		string url = $"http://localhost/Unity連携/get_stage_enemys.php?stage_id={stageId}";
@@ -52,6 +64,7 @@ public class EnemyManager : MonoBehaviour
 		}
 
 		string json = www.downloadHandler.text;
+		Debug.Log(json);
 		EnemyListWrapper wrapper = JsonUtility.FromJson<EnemyListWrapper>(json);
 		enemyList = wrapper.enemy;
 		Debug.Log($"ステージ{stageId}の敵を {enemyList.Count} 件取得");

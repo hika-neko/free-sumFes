@@ -9,6 +9,10 @@ public class KingAttack : MonoBehaviour
 		Commoner,
 		Warrior,
 		AdvanceWarrior,
+		Archer,
+		Assassin,
+		Wizard,
+		PlagueDoctor
 	}
 
 	[SerializeField] private SelectFighter selectedFighter = SelectFighter.Commoner;
@@ -32,7 +36,7 @@ public class KingAttack : MonoBehaviour
 	void Update()
 	{
 		if (!kingMovement.IsMoveEnabled ||
-			kingMovement.currentPhase == KingMovement.Phase.Castle) return;
+			PhaseManager.Instance.CurrentPhase != PhaseManager.Phase.Expedition) return;
 
 		if (Input.GetKeyDown(KeyCode.F1))
 		{
@@ -48,6 +52,26 @@ public class KingAttack : MonoBehaviour
 		{
 			selectedFighter = SelectFighter.AdvanceWarrior;
 			PlaySoundAndLog(0, "è„ãâêÌémWait");
+		}
+		if (Input.GetKeyDown(KeyCode.F4))
+		{
+			selectedFighter = SelectFighter.Archer;
+			PlaySoundAndLog(0, "ã|ï∫Wait");
+		}
+		if (Input.GetKeyDown(KeyCode.F5))
+		{
+			selectedFighter = SelectFighter.Assassin;
+			PlaySoundAndLog(0, "à√éEé“Wait");
+		}
+		if (Input.GetKeyDown(KeyCode.F6))
+		{
+			selectedFighter = SelectFighter.Wizard;
+			PlaySoundAndLog(0, "ñÇì±émWait");
+		}
+		if (Input.GetKeyDown(KeyCode.F7))
+		{
+			selectedFighter = SelectFighter.PlagueDoctor;
+			PlaySoundAndLog(0, "âuïaà„étWait");
 		}
 
 		if (Input.GetButtonDown("Attack"))

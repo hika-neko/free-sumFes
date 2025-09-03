@@ -26,6 +26,7 @@ public class EnemyStatus : MonoBehaviour
 			enemyAnimator.PlayDeath();
 			enemyMover.SetMoveSpeed(0);
 			this.gameObject.tag = "Untagged";
+			EnemyDeathCount.Instance.AddKill();
 		}
 		else 
 		{

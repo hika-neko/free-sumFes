@@ -6,6 +6,7 @@ public class FighterEntryParent : MonoBehaviour
 {
 	public static FighterEntryParent Instance;
 	[SerializeField] FighterArea[] fighterAreas;
+	List<Fighter> fighters;
 
 	private void Awake()
 	{
@@ -14,9 +15,16 @@ public class FighterEntryParent : MonoBehaviour
 
 	private void Start()
 	{
-		List<Fighter> fighters = FighterManager.Instance.GetFighterList();
+		fighters = FighterManager.Instance.GetFighterList();
 		SetUp(fighters);
 	}
+
+	private void Update()
+	{
+		fighters = FighterManager.Instance.GetFighterList();
+		SetUp(fighters);
+	}
+
 	public void SetUp(List<Fighter> fighterList)
 	{
 		for (int i =0; i < fighterAreas.Length; i++)

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4294691137997829587}
   m_Layer: 0
   m_Name: "3.\u4E0A\u7D1A\u6226\u58EB"
-  m_TagString: Ally
+  m_TagString: Attack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

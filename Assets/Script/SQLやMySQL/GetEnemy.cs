@@ -13,7 +13,6 @@ public class Enemy
 	public int attack;			  // 攻撃力
 	public float speed;			  // 速度
 	public string prefab_name;	  // プレハブ名
-	public int is_boss;			  // bossか
 	public string drop_item;      // ドロップアイテム
 }
 
@@ -50,11 +49,7 @@ public class GetEnemy : MonoBehaviour
 		{
 			Debug.Log($"ID:{e.enemy_id} 種類:{e.enemy_kind} " +
 				$"攻撃力: {e.attack} 速度:{e.speed} hp:{e.health_point}" +
-				$"プレハブ名: {e.prefab_name} ボスか: {e.is_boss} 収集品: {e.drop_item}");
-		}
-		foreach (var e in EnemyManager.Instance.enemyList)
-		{
-			Debug.Log($"{e.enemy_kind} -> ボスか:{e.is_boss}");
+				$"プレハブ名: {e.prefab_name} 収集品: {e.drop_item}");
 		}
 	}
 }

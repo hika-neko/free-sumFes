@@ -6,29 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class KingMovement : MonoBehaviour
 {
-	public enum Phase
-	{
-		Castle,
-		Expedition,
-		Saloon,
-		WeaponShop
-	}
-
-	private Dictionary<Phase, string> phaseNames = new Dictionary<Phase, string>
-	{
-		{Phase.Castle, "èÈâ∫í¨" },
-		{Phase.Expedition, "âìê™" },
-		{Phase.Saloon, "éèÍ"},
-		{Phase.WeaponShop, "íbñËâÆ"}
-	};
-
-	[SerializeField] public Phase currentPhase = Phase.Castle;
 	[SerializeField] private float moveSpeed = 5f;
 	[SerializeField] private float jumpForce = 5f;
 	[SerializeField] private LayerMask groundLayer;
 	[SerializeField] private Transform groundCheck;
 	[SerializeField] private float groundCheckRadius = 0.3f;
-	[SerializeField] TextMeshProUGUI phaseText;
 	[SerializeField] SceneSwitch sceneSwitch;
 
 	private Rigidbody2D rb;
@@ -45,14 +27,17 @@ public class KingMovement : MonoBehaviour
 	private float moneyTime = 2.5f;
 	private float timer = 0f;
 
-	public bool IsMoveEnabled { get; set; } = true;
+	private int king_hp = 3;
+	public bool IsMoveEnabled;
+	public int kingId;
+	private bool isDead;
 
 	void Start()
 	{
 		rb = GetComponent<Rigidbody2D>();
 		sr = GetComponent<SpriteRenderer>();
 		animator = GetComponent<Animator>();
-		if(LoginUI.IsLoginUIActive)
+		if (LoginUI.IsLoginUIActive)
 		{
 			IsMoveEnabled = false;
 		}
@@ -60,7 +45,10 @@ public class KingMovement : MonoBehaviour
 
 	void Update()
 	{
-		UpdatePhaseText(currentPhase);
+		if (Input.GetKeyDown(KeyCode.F12))
+		{
+			TakeDamage(1);
+		}
 		if (IsMoveEnabled)
 		{
 			movement.x = Input.GetAxis("Horizontal");
@@ -87,48 +75,56 @@ public class KingMovement : MonoBehaviour
 				{
 					// èÈ-íbñËâÆ
 					case 0:
-						currentPhase = Phase.WeaponShop;
-						SceneSwitch.Instance.LoadModeScene(SceneSwitch.Phase.WeaponShop, "Castle");
+						PhaseManager.Instance.CurrentPhase = PhaseManager.Phase.WeaponShop;
+						SceneSwitch.Instance.LoadModeScene(PhaseManager.Phase.WeaponShop, "Castle");
 						break;
 
 					// èÈ-éèÍ
 					case 1:
-						currentPhase = Phase.Saloon;
-						SceneSwitch.Instance.LoadModeScene(SceneSwitch.Phase.Saloon, "Castle");
+						PhaseManager.Instance.CurrentPhase = PhaseManager.Phase.Saloon;
+						SceneSwitch.Instance.LoadModeScene(PhaseManager.Phase.Saloon, "Castle");
 						break;
 
 					// íbñËâÆ-èÈ
 					case 2:
-						currentPhase = Phase.Castle;
-						SceneSwitch.Instance.LoadModeScene(SceneSwitch.Phase.Castle, "WeaponShop");
+						PhaseManager.Instance.CurrentPhase = PhaseManager.Phase.Castle;
+						SceneSwitch.Instance.LoadModeScene(PhaseManager.Phase.Castle, "WeaponShop");
 						break;
 
 					// éèÍ-èÈ
 					case 3:
-						currentPhase = Phase.Castle;
-						SceneSwitch.Instance.LoadModeScene(SceneSwitch.Phase.Castle, "Saloon");
+						PhaseManager.Instance.CurrentPhase = PhaseManager.Phase.Castle;
+						SceneSwitch.Instance.LoadModeScene(PhaseManager.Phase.Castle, "Saloon");
 						break;
 
+					case 4:
+					// éèÍ-èÈ
+					PhaseManager.Instance.CurrentPhase = PhaseManager.Phase.Expedition;
+					SceneSwitch.Instance.LoadModeScene(PhaseManager.Phase.Expedition, "Castle");
+					break;
+
 					default:
-						Debug.LogWarning("ñ¢íËã`ÇÃTalk ID: " + doorId);
+						Debug.LogWarning("ñ¢íËã`ÇÃDoor ID: " + doorId);
 						break;
 				}
 			}
 		}
 
-		switch (currentPhase)
+		switch (PhaseManager.Instance.CurrentPhase)
 		{
-			case Phase.Castle:
+			case PhaseManager.Phase.Castle:
+			if (!LoginUI.IsLoginUIActive)
+			{
 				timer += Time.deltaTime;
 				if (timer >= moneyTime)
 				{
-					KingMoneyManager.Instance.AddMoney(100000);
+					KingMoneyManager.Instance.AddMoney(100);
 					timer = 0f;
 				}
+			}
 			break;
 				
-			case Phase.Saloon:
-
+			case PhaseManager.Phase.Saloon:
 			if (Input.GetButtonDown("Submit") && nearTalker && !unlockNow)
 			{
 				unlockNow = true;
@@ -144,7 +140,6 @@ public class KingMovement : MonoBehaviour
 					}
 				}
 			}
-
 			else if(Input.GetButtonDown("Cancel") && nearTalker && unlockNow)
 			{
 				unlockNow = false;
@@ -153,11 +148,13 @@ public class KingMovement : MonoBehaviour
 			}
 			break;
 
-			case Phase.WeaponShop: 
+			case PhaseManager.Phase.WeaponShop: 
 			
 			break;
-			case Phase.Expedition:
-			if (Input.GetButtonDown("Jump") && isGrounded && IsMoveEnabled)
+
+			case PhaseManager.Phase.Expedition:
+			//Debug.Log("isGrouned + " + isGrounded + "/ isMoveEnabled + " + IsMoveEnabled);
+			if (Input.GetButtonDown("Jump")&& IsMoveEnabled)
 			{
 				rb.velocity = new Vector2(rb.velocity.x, jumpForce);
 				animator.SetTrigger("Jump");
@@ -177,15 +174,37 @@ public class KingMovement : MonoBehaviour
 	{
 		IsMoveEnabled = enabled;
 	}
-	public void UpdatePhaseText(Phase currentPhase)
+	public void TakeDamage(int damage)
 	{
-		string displayName = phaseNames.ContainsKey(currentPhase)
-			? phaseNames[currentPhase]
-			: currentPhase.ToString(); // fallback
-
-		phaseText.text = "Phase:" + displayName;
+		if(isDead) return;
+		king_hp -= damage;
+		if(king_hp <= 0)
+		{
+			Death();
+		}
+		else
+		{
+			animator.SetTrigger("Damage");
+		}
 	}
+	private void Death()
+	{
+		isDead = true;
+		animator.SetTrigger("Death");
+		KingMoneyManager.Instance.DicreaseMoney();
+		StartCoroutine(ReturnToCastle());
+	}
+	private IEnumerator ReturnToCastle()
+	{
+		yield return new WaitForSeconds(2f); // éÄñSÉAÉjÉÅÇÃçƒê∂ë“Çø
 
+		// ÉVÅ[ÉìëJà⁄
+		SceneSwitch.Instance.LoadModeScene(PhaseManager.Phase.Castle, "Forest");
+		animator.Play("Idle");
+		// HPïúäàÇ»Ç«
+		king_hp = 3;
+		isDead = false;
+	}
 	private void OnTriggerStay2D(Collider2D other)
 	{
 		if(other.CompareTag("Door"))

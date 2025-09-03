@@ -38,10 +38,13 @@ public class LoginUI : MonoBehaviour
 	[SerializeField] private List<Selectable> selectablesElement;
 	[SerializeField] private Image selector;
 
+	public int kingLevel;
 	private int selectedIndex = 0;
 	private bool isCreating = false;
+	private bool isLogin = false;
 	private enum Mode
 	{
+		None,
 		AddKing,
 		Login,
 	}
@@ -56,6 +59,9 @@ public class LoginUI : MonoBehaviour
 	private void Update()
 	{
 		if (selectablesElement == null || selectablesElement.Count == 0) return;
+
+		int kingId = PlayerPrefs.GetInt("king_id");
+		StartCoroutine(GetUnlockedFighters(kingId));
 
 		if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.Tab))
 		{
@@ -183,7 +189,6 @@ public class LoginUI : MonoBehaviour
 		else
 		{
 			var result = JsonUtility.FromJson<KingInfo>(www.downloadHandler.text);
-			PlayerPrefs.SetInt("king_id", result.king_id);
 			kingIdText.gameObject.SetActive(true);
 			kingIdText.text = $"‚ ‚È‚½‚Ìid‚Í {result.king_id.ToString()}";
 			yield return new WaitForSeconds(3f);
@@ -194,15 +199,26 @@ public class LoginUI : MonoBehaviour
 				KingMovement move = player.GetComponent<KingMovement>();
 				move.IsMoveEnabled = true;
 			}
-			Debug.Log("V‹Kì¬: king_id = " + result.king_id);
-			Debug.Log("“ü—Í‚³‚ê‚½–¼‘O: " + addNameInput.text);
+			//Debug.Log("V‹Kì¬: king_id = " + result.king_id);
+			//Debug.Log("“ü—Í‚³‚ê‚½–¼‘O: " + addNameInput.text);
 			gameObject.SetActive(false);
+			PlayerPrefs.SetInt("king_id", result.king_id);
+			PlayerPrefs.SetInt("Player_Level", result.level);
+			PlayerPrefs.Save();
 		}
 		isCreating = false;
 	}
 	IEnumerator LoginKing(string name, string id)
 	{
+		if (isLogin) yield break; // 2dŒÄ‚Ño‚µ–h~
+		isLogin = true;
 		WWWForm form = new WWWForm();
+		int kingId;
+		if (!int.TryParse(id, out kingId))
+		{
+			Debug.LogError("ID‚Ì•ÏŠ·‚É¸”s‚µ‚Ü‚µ‚½: " + id);
+			yield break;
+		}
 		form.AddField("king_id", id);
 		form.AddField("king_name", name);
 
@@ -239,23 +255,57 @@ public class LoginUI : MonoBehaviour
 						KingMovement move = player.GetComponent<KingMovement>();
 						move.IsMoveEnabled = true;
 					}
+					PlayerPrefs.SetInt("king_id", kingId);
+					PlayerPrefs.SetInt("Player_Level", info.level);
+					PlayerPrefs.Save();
 					gameObject.SetActive(false);
 				}
 			}
 		}
-		//string url = $"http://localhost/Unity˜AŒg/login_king.php";
-		//UnityWebRequest www = UnityWebRequest.Get(url);
-		//yield return www.SendWebRequest();
+		isLogin = false;
+	}
 
-		//if (www.result != UnityWebRequest.Result.Success 
-		//	&& www.downloadHandler.text == "not_found")
-		//{
-		//	Debug.LogError("ƒf[ƒ^æ“¾¸”s: " + www.error);
-		//}
-		//else
-		//{
-		//	gameObject.SetActive(false);
-		//}
+	public IEnumerator GetUnlockedFighters(int kingId)
+	{
+		string url = $"http://localhost/Unity˜AŒg/get_king_fighter_unlocked.php?king_id={kingId}";
+
+		using (UnityWebRequest www = UnityWebRequest.Get(url))
+		{
+			yield return www.SendWebRequest();
+
+			if(www.result != UnityWebRequest.Result.Success)
+			{
+				Debug.LogWarning("’ÊM¸”s: " + www.error);
+				yield break;
+			}
+
+			var json = www.downloadHandler.text;
+			var data = JsonUtility.FromJson<UnlockedFightersResponse>(json);
+
+			if(data.success)
+			{
+				foreach(var fighterId in data.unlocked_fighters)
+				{
+					var target = FighterManager.Instance.fighterList.Find(f => f.fighter_id == fighterId);
+					if(target != null)
+					{
+						target.unlocked = 1;
+					}
+				}
+			}
+			else 
+			{
+				Debug.LogWarning("‰ğŒˆÏî•ñæ“¾¸”s: " + data.message);
+			}
+		}
+	}
+
+	[System.Serializable]
+	public class UnlockedFightersResponse
+	{
+		public bool success;
+		public List<int> unlocked_fighters;
+		public string message;
 	}
 
 	[System.Serializable]

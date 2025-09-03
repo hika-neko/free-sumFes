@@ -72,5 +72,19 @@ public class Mover : MonoBehaviour
 				}
 			}
 		}
+
+		if (other.CompareTag("Boss"))
+		{
+			BossController boss = other.GetComponent<BossController>();
+			if (boss != null)
+			{
+				boss.TakeDamage(attackPower);
+				Destroy(gameObject);
+				if (generatorRef != null)
+				{
+					generatorRef.DecreaseSpawnCount();
+				}
+			}
+		}
 	}
 }

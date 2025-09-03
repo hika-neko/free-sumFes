@@ -35,6 +35,13 @@ public class KingMoneyManager : MonoBehaviour
 		StartCoroutine(MoneyManager.Instance.ChangeMoneyOnServer(kingId, amount));
 		// ここでサーバー通知とかも呼ぶ
 	}
+	public void DicreaseMoney()
+	{
+		int delta = -(money / 2);
+		money += delta;
+		StartCoroutine(MoneyManager.Instance.ChangeMoneyOnServer(kingId,delta));
+		// ここでサーバー通知とかも呼ぶ
+	}
 	public void SetKingInfo(KingInfo info)
 	{
 		kingId = info.king_id;

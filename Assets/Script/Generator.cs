@@ -40,6 +40,7 @@ public class Generator : MonoBehaviour
 			Debug.Log("生成数制限により中断！");
 			return;
 		}
+
 		Fighter data = null;
 		if(index != 0)
 		{
@@ -48,6 +49,13 @@ public class Generator : MonoBehaviour
 			{
 				Debug.LogWarning("Fighterデータが見つかりません: id=" + index);
 				return;
+			}
+			Debug.Log("index = " + index);
+			bool isUnlocked = FighterManager.Instance.unlockedFighter.Contains(index);
+			Debug.Log("isUnlocked = " + isUnlocked);
+			if (!FighterManager.Instance.unlockedFighter.Contains(index))
+			{
+				Debug.LogWarning("このファイターはまだ解放されてません");
 			}
 		}
 

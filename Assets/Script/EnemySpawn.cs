@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemySpawn : MonoBehaviour
 {
-	[SerializeField] private float spawnInterval = 10f;
+	[SerializeField] private float spawnInterval = 1f;
 	private float timer = 0f;
+	public int boss_appear_num;
+	public bool spawnEnabled = true;
 
 	void Update()
 	{
+		if (!spawnEnabled) return;
 		timer += Time.deltaTime;
 		if (timer >= spawnInterval)
 		{
@@ -16,9 +20,13 @@ public class EnemySpawn : MonoBehaviour
 			timer = 0f;
 		}
 	}
-
+	public void StopSpawning()
+	{
+		spawnEnabled = false;
+	}
 	void SpawnEnemy()
 	{
+		if(LoginUI.IsLoginUIActive) return;
 		var enemyList = EnemyManager.Instance.enemyList;
 		if(enemyList == null || enemyList.Count == 0)
 		{
@@ -54,7 +62,7 @@ public class EnemySpawn : MonoBehaviour
 			flipX = true;
 		}
 
-		GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
+		GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity, this.transform);
 		SpriteRenderer eneSR = enemy.GetComponent<SpriteRenderer>();
 		if(eneSR != null)
 		{

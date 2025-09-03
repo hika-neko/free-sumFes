@@ -32,11 +32,11 @@ public class FighterArea : MonoBehaviour
 			fighterKindToSprite = new Dictionary<string, Sprite>
 			{
 				{"Warrior",Resources.Load<Sprite>("FighterIcons/1.ím")},
-		{"AdvanceWarrior",Resources.Load<Sprite>("FighterIcons/2.ã‹‰ím")},
-		{"Archer",Resources.Load<Sprite>("FighterIcons/3.‹|•º")},
-		{"Assassin",Resources.Load<Sprite>("FighterIcons/4.ˆÃEÒ")},
-		{"Wizard",Resources.Load<Sprite>("FighterIcons/5.–‚“±m")},
-		{"PlagueDoctor",Resources.Load<Sprite>("FighterIcons/6.‰u•aˆãt")}
+				{"AdvanceWarrior",Resources.Load<Sprite>("FighterIcons/2.ã‹‰ím")},
+				{"Archer",Resources.Load<Sprite>("FighterIcons/3.‹|•º")},
+				{"Assassin",Resources.Load<Sprite>("FighterIcons/4.ˆÃEÒ")},
+				{"Wizard",Resources.Load<Sprite>("FighterIcons/5.–‚“±m")},
+				{"PlagueDoctor",Resources.Load<Sprite>("FighterIcons/6.‰u•aˆãt")}
 			};
 		}
 	}

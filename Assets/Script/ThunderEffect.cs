@@ -6,9 +6,22 @@ public class ThunderEffect : MonoBehaviour
 {
 	private int damage = 1;
 	public float lifeTime = 0.5f;
+	private GameObject marker;
 	private void Start()
 	{
-		Destroy(gameObject, lifeTime);
+		Invoke(nameof(DestroySelf), lifeTime);
+	}
+
+	public void SetMarker(GameObject markerobj)
+	{
+		marker = markerobj;
+	}
+	void DestroySelf()
+	{
+		if (marker != null)
+		{
+			Destroy(marker);
+		}
 	}
 	private void OnTriggerEnter2D(Collider2D other)
 	{

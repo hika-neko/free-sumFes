@@ -121,9 +121,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76231e0728d6f4146b8db73ae385f33c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHp: 10
   attackInterval: 3
   thunder: {fileID: 4494641125539581459, guid: c592fd04039a0c749b37256d01ce05c2, type: 3}
+  thunderMarker: {fileID: 5518353025665214768, guid: 8e53c340e17d6eb4a909ae4737189b46, type: 3}
+  delayThunder: 1.5
 --- !u!61 &3049706536648553019
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -59,7 +59,8 @@ public class Mover : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		if(other.CompareTag("Enemy"))
+		string baseName = gameObject.name.Replace("(Clone)", "").Trim();
+		if(other.CompareTag("Enemy") && baseName != "4.‹|•º")
 		{
 			EnemyStatus enemyStatus = other.GetComponent<EnemyStatus>();
 			if(enemyStatus != null)
@@ -73,7 +74,7 @@ public class Mover : MonoBehaviour
 			}
 		}
 
-		if (other.CompareTag("Boss"))
+		if (other.CompareTag("Boss") && baseName != "4.‹|•º")
 		{
 			BossController boss = other.GetComponent<BossController>();
 			if (boss != null)

@@ -14,6 +14,8 @@ public class BossController : MonoBehaviour
 
 	private Animator animator;
 	[SerializeField] GameObject thunder;
+	[SerializeField] GameObject thunderMarker;
+	[SerializeField] float delayThunder = 1.5f;
 	private int glideAttackDamage = 1;
 	private bool isGliding = false;
 	private bool isAttacking = false;
@@ -60,7 +62,10 @@ public class BossController : MonoBehaviour
 		Vector3 playerPos = GameObject.FindWithTag("Player").transform.position;
 		float spawnHeight = 10f;
 		Vector3 spawnThunder = new Vector3(playerPos.x, playerPos.y + spawnHeight, 0f);
-		Instantiate(thunder, spawnThunder, Quaternion.identity);
+		Vector3 strikeThunder = new Vector3(playerPos.x, playerPos.y, 0f);
+		GameObject marker = Instantiate(thunderMarker, strikeThunder, Quaternion.identity);
+		GameObject thunderObject = Instantiate(thunder, spawnThunder, Quaternion.identity);
+		thunderObject.GetComponent<ThunderAttack>().SetMarker(marker);
 	}
 
 	IEnumerator PerformGlideAttack()
@@ -130,6 +135,8 @@ public class BossController : MonoBehaviour
 
 		// 撃破後に消す、演出入れるなど
 		Destroy(gameObject, 2f);
+
+		SceneSwitch.Instance.LoadModeScene(PhaseManager.Phase.Castle, "Forest");
 	}
 	private void OnTriggerEnter2D(Collider2D other)
 	{

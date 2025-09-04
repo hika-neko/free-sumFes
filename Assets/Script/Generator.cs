@@ -82,6 +82,14 @@ public class Generator : MonoBehaviour
 			Mover mover = obj.GetComponent<Mover>();
 			if (mover != null)
 			{
+				if(index == 4)
+				{
+					Archer archer = obj.GetComponent<Archer>();
+					if (archer != null)
+					{
+						archer.SetAttackPower(data.attack);
+					}
+				}
 				mover.SetDirection(isFacingLeft ? Vector2.left : Vector2.right);
 				mover.SetGenerator(this);
 				mover.SetPower(data.attack);

@@ -6,6 +6,12 @@ public class ThunderAttack : MonoBehaviour
 {
 	private int damage = 1;
 	[SerializeField] GameObject effect;
+	private GameObject markerToDestroy;
+
+	public void SetMarker(GameObject marker)
+	{
+		markerToDestroy = marker;
+	}
 	private void OnTriggerEnter2D(Collider2D other)
 	{
 		if (other.CompareTag("Player"))
@@ -23,7 +29,12 @@ public class ThunderAttack : MonoBehaviour
 			// 地面に落ちたら消える（エフェクトあれば出してもいい
 			if(effect != null)
 			{
-				Instantiate(effect,transform.position,Quaternion.identity);
+				GameObject fx = Instantiate(effect,transform.position,Quaternion.identity);
+				ThunderEffect fxScript = fx.GetComponent<ThunderEffect>();
+				if (fxScript != null)
+				{
+					fxScript.SetMarker(markerToDestroy);
+				}
 			}
 			Destroy(gameObject);
 		}

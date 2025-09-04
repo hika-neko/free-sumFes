@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class KingMovement : MonoBehaviour
 {
+	private float invisibleTime = 0.4f;
+	private float invisibleTimer;
+	private bool isInvisible;
 	[SerializeField] private float moveSpeed = 5f;
 	[SerializeField] private float jumpForce = 5f;
 	[SerializeField] private LayerMask groundLayer;
@@ -27,7 +30,7 @@ public class KingMovement : MonoBehaviour
 	private float moneyTime = 2.5f;
 	private float timer = 0f;
 
-	private int king_hp = 3;
+	public int king_hp = 3;
 	public bool IsMoveEnabled;
 	public int kingId;
 	private bool isDead;
@@ -45,6 +48,18 @@ public class KingMovement : MonoBehaviour
 
 	void Update()
 	{
+		// 無敵時間のカウント
+		if (isInvisible)
+		{
+			invisibleTimer += Time.deltaTime;
+			if (invisibleTimer >= invisibleTime)
+			{
+				isInvisible = false;
+				gameObject.tag = "Player"; // タグを戻す
+				invisibleTimer = 0f;
+				Debug.Log("無敵終了");
+			}
+		}
 		if (Input.GetKeyDown(KeyCode.F12))
 		{
 			TakeDamage(1);
@@ -176,7 +191,7 @@ public class KingMovement : MonoBehaviour
 	}
 	public void TakeDamage(int damage)
 	{
-		if(isDead) return;
+		if(isDead || isInvisible) return;
 		king_hp -= damage;
 		if(king_hp <= 0)
 		{
@@ -186,6 +201,8 @@ public class KingMovement : MonoBehaviour
 		{
 			animator.SetTrigger("Damage");
 		}
+		isInvisible = true;
+		gameObject.tag = "Untagged";
 	}
 	private void Death()
 	{
@@ -196,9 +213,10 @@ public class KingMovement : MonoBehaviour
 	}
 	private IEnumerator ReturnToCastle()
 	{
-		yield return new WaitForSeconds(2f); // 死亡アニメの再生待ち
+		yield return new WaitForSeconds(1f); // 死亡アニメの再生待ち
 
 		// シーン遷移
+		PhaseManager.Instance.CurrentPhase = PhaseManager.Phase.Castle;
 		SceneSwitch.Instance.LoadModeScene(PhaseManager.Phase.Castle, "Forest");
 		animator.Play("Idle");
 		// HP復活など
